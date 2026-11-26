@@ -1,0 +1,24 @@
+import { emptyNutrients, scale } from '../src/foods';
+import { recipeFood, recipeTotals } from '../src/recipe';
+import { decodeMeal, encodeMeal, shareMessage } from '../src/share';
+const ok = (label: string, cond: boolean, extra = '') => console.log(cond ? 'PASS' : 'FAIL', label, extra);
+const item = (name: string, grams: number, kcal: number, p: number) => ({ name, serving: `${grams} g`, sg: grams, grams, n: { ...emptyNutrients(), kcal, p } });
+// Chili: 500 g beef (1250 kcal, 130 p), 400 g beans (360 kcal, 24 p), 400 g tomatoes (80 kcal, 4 p) = 1300 g raw, 1690 kcal
+const items = [item('Ground beef', 500, 1250, 130), item('Black beans', 400, 360, 24), item('Tomatoes', 400, 80, 4)];
+let t = recipeTotals({ items, servings: 4 });
+ok('total kcal', Math.round(t.total.kcal) === 1690);
+ok('per serving kcal', Math.round(t.perServing.kcal) === 423, String(t.perServing.kcal));
+ok('per serving weight uses raw total', Math.round(t.perG) === 325);
+t = recipeTotals({ items, servings: 4, cookedG: 1000 });
+ok('cooked weight changes grams per serving, not calories', Math.round(t.perG) === 250 && Math.round(t.perServing.kcal) === 423);
+const f = recipeFood({ name: 'Chili', servings: 4, cookedG: 1000, items });
+ok('food: 1 serving portion', f.portions![0].label === '1 serving' && f.g === 250);
+ok('food: whole recipe portion', f.portions![1].label === 'whole recipe' && f.portions![1].g === 1000);
+ok('logging 300 g = 300/1000 of the pot', Math.round(scale(f, 300).kcal) === 507);
+ok('logging 1.5 servings', Math.round(scale(f, f.g * 1.5).kcal) === 634);
+const code = encodeMeal({ name: f.name, items, recipe: { servings: 4, cookedG: 1000 } });
+const back = decodeMeal('hey\n' + code);
+ok('share keeps servings and weight', back?.recipe?.servings === 4 && back?.recipe?.cookedG === 1000);
+ok('share keeps ingredients', back?.items.length === 3 && back?.items[0].n.p === 130);
+ok('plain meal has no recipe info', decodeMeal(encodeMeal({ name: 'x', items }))?.recipe === undefined);
+console.log(shareMessage({ name: 'Chili', items, recipe: { servings: 4 } }, 1690).split('\n')[0]);

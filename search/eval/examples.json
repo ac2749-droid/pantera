@@ -1,0 +1,11 @@
+[
+  {"q": "honest cow cottage cheese", "top": 3, "brand": "honest cow"},
+  {"q": "cottage cheese honest cow", "top": 3, "brand": "honest cow"},
+  {"q": "honest cow cotage chese", "top": 3, "brand": "honest cow"},
+  {"q": "chobani greek yogurt", "top": 5, "brand": "chobani", "min": 3},
+  {"q": "fairlife milk", "top": 5, "brand": "fairlife", "min": 3},
+  {"q": "cottage cheese", "top": 1, "kind": "generic", "nameWords": ["cottage"], "brandedWithin": 10},
+  {"q": "chiken breast", "top": 3, "nameWords": ["chicken", "breast"]},
+  {"q": "zzqx cottage cheese", "bestEmpty": true, "closeNameWords": ["cottage"]},
+  {"barcodes": ["0041900091290", "41900091290"]}
+]
